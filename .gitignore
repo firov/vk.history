@@ -1,0 +1,6 @@
+.idea
+*.iml
+logs/*
+target/*
+history/txt/*
+history/html/*
