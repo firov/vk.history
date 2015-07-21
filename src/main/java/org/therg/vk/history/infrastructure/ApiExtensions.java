@@ -32,6 +32,14 @@ public class ApiExtensions {
         this.mapper = mapper;
     }
 
+    /**
+     * Loads all dialog's messages
+     *
+     * @param usersService   user service
+     * @param conversationId conversation identifier
+     * @param isChat         true if dialog is a multi-user chat
+     * @return Dialog's messages
+     */
     private Collection<DialogMessage> getConversationMessages(UserService usersService, Long conversationId, boolean isChat) {
         Collection<DialogMessage> messages = new ArrayList<>();
         long offset = 0;
@@ -60,14 +68,34 @@ public class ApiExtensions {
         return messages;
     }
 
+    /**
+     * Loads all dialog's messages
+     *
+     * @param usersService user service
+     * @param dialogId     dialog identifier
+     * @return
+     */
     public Collection<DialogMessage> getDialogMessages(UserService usersService, Long dialogId) {
         return getConversationMessages(usersService, dialogId, false);
     }
 
+    /**
+     * Loads all chat's messages
+     *
+     * @param usersService user service
+     * @param chatId       chat identifier
+     * @return
+     */
     public Collection<DialogMessage> getChatMessages(UserService usersService, Long chatId) {
         return getConversationMessages(usersService, chatId, true);
     }
 
+    /**
+     * Loads users info by ids
+     *
+     * @param ids users ids
+     * @return users map
+     */
     public Map<Long, User> getUsers(Collection<Long> ids) {
         UserInfoResult usersInfo = this.client.getUserInfo(ids);
         return usersInfo.result
@@ -75,6 +103,11 @@ public class ApiExtensions {
                 .collect(Collectors.toMap(x -> x.id, x -> mapper.map(x, User.class)));
     }
 
+    /**
+     * Loads current user's dialogs
+     *
+     * @return Dialogs
+     */
     public Collection<DialogInfo> loadDialogs() {
         Collection<DialogInfo> result = new ArrayList<>();
         long offset = 0;

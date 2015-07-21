@@ -84,48 +84,56 @@ public class HistoryDownloader {
         usersService.setupUsers(this.apiExtensions.getUsers(participants));
 
         if (!arguments.isWithoutDialogs()) {
-            logger.info("Loading dialogs");
-
-            dialogs.stream().filter(x -> !x.isChat).map(x -> x.id).forEach(dialogId -> {
-                UserDialog dialog = new UserDialog(dialogId);
-                dialog.partner = usersService.getUser(dialogId);
-                dialog.owner = currentUser;
-
-                logger.info(String.format("Loading conversation with '%d'", dialog.partner.id));
-
-                dialog.messages = this.apiExtensions.getDialogMessages(usersService, dialogId);
-
-                appender.proccessDialog(dialog);
-
-                if (!arguments.isWithoutPhotos()) {
-                    logger.info("Loading photos");
-                    downloadPhotos(dialog);
-                }
-            });
+            loadDialogs(appender, currentUser, dialogs, usersService);
         }
 
         if (!arguments.isWithoutChats()) {
-            logger.info("Loading chats");
-
-            dialogs.stream().filter(x -> x.isChat).map(x -> x.id).forEach(chatId -> {
-                ChatDialog dialog = new ChatDialog(chatId);
-                dialog.owner = currentUser;
-                dialog.title = chatsTitles.get(chatId);
-
-                logger.info(String.format("Loading chat '%d'", dialog.id));
-
-                dialog.messages = this.apiExtensions.getChatMessages(usersService, chatId);
-
-                appender.proccessDialog(dialog);
-
-                if (!arguments.isWithoutPhotos()) {
-                    logger.info("Loading photos");
-                    downloadPhotos(dialog);
-                }
-            });
+            loadChats(appender, currentUser, dialogs, chatsTitles, usersService);
         }
 
         return true;
+    }
+
+    private void loadChats(IHistoryAppender appender, User currentUser, Collection<DialogInfo> dialogs, Map<Long, String> chatsTitles, UserService usersService) {
+        logger.info("Loading chats");
+
+        dialogs.stream().filter(x -> x.isChat).map(x -> x.id).forEach(chatId -> {
+            ChatDialog dialog = new ChatDialog(chatId);
+            dialog.owner = currentUser;
+            dialog.title = chatsTitles.get(chatId);
+
+            logger.info(String.format("Loading chat '%d'", dialog.id));
+
+            dialog.messages = this.apiExtensions.getChatMessages(usersService, chatId);
+
+            appender.proccessDialog(dialog);
+
+            if (!arguments.isWithoutPhotos()) {
+                logger.info("Loading photos");
+                downloadPhotos(dialog);
+            }
+        });
+    }
+
+    private void loadDialogs(IHistoryAppender appender, User currentUser, Collection<DialogInfo> dialogs, UserService usersService) {
+        logger.info("Loading dialogs");
+
+        dialogs.stream().filter(x -> !x.isChat).map(x -> x.id).forEach(dialogId -> {
+            UserDialog dialog = new UserDialog(dialogId);
+            dialog.partner = usersService.getUser(dialogId);
+            dialog.owner = currentUser;
+
+            logger.info(String.format("Loading conversation with '%d'", dialog.partner.id));
+
+            dialog.messages = this.apiExtensions.getDialogMessages(usersService, dialogId);
+
+            appender.proccessDialog(dialog);
+
+            if (!arguments.isWithoutPhotos()) {
+                logger.info("Loading photos");
+                downloadPhotos(dialog);
+            }
+        });
     }
 
     private void downloadPhotos(Dialog dialog) {
