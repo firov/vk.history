@@ -9,6 +9,8 @@ import org.therg.vk.history.api.messages.GetChatResult;
 import org.therg.vk.history.api.users.UserInfoResult;
 import org.therg.vk.history.appenders.HtmlAppender;
 import org.therg.vk.history.appenders.TextAppender;
+import org.therg.vk.history.infrastructure.ApiExtensions;
+import org.therg.vk.history.infrastructure.UserService;
 import org.therg.vk.history.model.*;
 
 import java.io.File;
@@ -33,7 +35,7 @@ public class HistoryDownloader {
         this.apiExtensions = new ApiExtensions(this.apiClient, mapper);
     }
 
-    public void execute() throws ApplicationException {
+    public boolean execute() throws ApplicationException {
         IHistoryAppender appender;
         if (arguments.getFormat().equals("html"))
             appender = new HtmlAppender();
@@ -46,7 +48,7 @@ public class HistoryDownloader {
         if (response.errorCode != 0) {
             logger.error("failed to load user info");
             logger.error(response.errorMessage);
-            return;
+            return false;
         }
 
         User currentUser = mapper.map(response.result.get(0), User.class);
@@ -122,6 +124,8 @@ public class HistoryDownloader {
                 }
             });
         }
+
+        return true;
     }
 
     private void downloadPhotos(Dialog dialog) {

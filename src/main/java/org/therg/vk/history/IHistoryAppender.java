@@ -1,5 +1,6 @@
 package org.therg.vk.history;
 
+import org.therg.vk.history.model.ApplicationException;
 import org.therg.vk.history.model.ChatDialog;
 import org.therg.vk.history.model.UserDialog;
 

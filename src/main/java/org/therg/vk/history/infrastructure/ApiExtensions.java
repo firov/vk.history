@@ -1,4 +1,4 @@
-package org.therg.vk.history;
+package org.therg.vk.history.infrastructure;
 
 import ma.glasnost.orika.MapperFacade;
 import org.apache.logging.log4j.LogManager;

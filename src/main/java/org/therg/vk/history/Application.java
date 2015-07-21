@@ -4,6 +4,8 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.therg.vk.history.model.ApplicationException;
+import org.therg.vk.history.model.OrikaMapping;
 
 public class Application {
     public static final String tokenUrl =
@@ -21,7 +23,7 @@ public class Application {
             System.out.println("Please obtain access token from:");
             System.out.println(tokenUrl);
             System.out.println("Open this url in browser and, after confirming access for application, copy token from url");
-            return;
+            System.exit(1);
         }
 
         MapperFactory factory = new DefaultMapperFactory.Builder().useAutoMapping(false).build();
@@ -29,14 +31,14 @@ public class Application {
 
         HistoryDownloader downloader = new HistoryDownloader(arguments, factory.getMapperFacade());
         try {
-            downloader.execute();
+            if (!downloader.execute())
+                System.exit(1);
         } catch (ApplicationException e) {
             logger.error(e.getMessage());
-            return;
+            System.exit(1);
         }
 
         logger.info("done.");
         logger.info("\nHave a nice day.\n\n");
-
     }
 }

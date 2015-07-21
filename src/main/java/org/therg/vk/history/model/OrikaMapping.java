@@ -1,4 +1,4 @@
-package org.therg.vk.history;
+package org.therg.vk.history.model;
 
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;

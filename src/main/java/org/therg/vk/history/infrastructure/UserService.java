@@ -1,4 +1,4 @@
-package org.therg.vk.history;
+package org.therg.vk.history.infrastructure;
 
 import org.therg.vk.history.model.User;
 
