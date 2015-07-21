@@ -40,6 +40,11 @@ public class MessageCustomConverter extends CustomMapper<Message, DialogMessage>
                         dialogMessage.photos = new ArrayList<>();
                     PhotoInfo photoInfo = new PhotoInfo(attachment.photo.id, attachment.photo.getBestUrl());
                     dialogMessage.photos.add(photoInfo);
+                } else if (attachment.sticker != null) {
+                    if (dialogMessage.photos == null)
+                        dialogMessage.photos = new ArrayList<>();
+                    PhotoInfo photoInfo = new PhotoInfo(attachment.sticker.id, attachment.sticker.getSmallestSizeUrl());
+                    dialogMessage.photos.add(photoInfo);
                 }
             }
 

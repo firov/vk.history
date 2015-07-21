@@ -17,5 +17,8 @@ public class Attachment {
 
     @SerializedName("document")
     public Document document;
+
+    @SerializedName("sticker")
+    public Sticker sticker;
 }
 
