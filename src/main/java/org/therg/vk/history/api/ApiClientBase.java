@@ -66,7 +66,7 @@ public abstract class ApiClientBase {
     }
 
     private JsonObject getJson(HttpResponse response) throws IOException {
-        InputStreamReader reader = new InputStreamReader((response.getEntity().getContent()));
+        InputStreamReader reader = new InputStreamReader((response.getEntity().getContent()), "UTF-8");
         return gson.fromJson(reader, JsonObject.class);
     }
 

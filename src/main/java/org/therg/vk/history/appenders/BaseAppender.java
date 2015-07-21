@@ -51,7 +51,8 @@ public abstract class BaseAppender implements IHistoryAppender {
             }
 
         try {
-            file = new BufferedWriter(new FileWriter(new File(path, filename), false));
+            file = new BufferedWriter(
+                    new OutputStreamWriter(new FileOutputStream(new File(path, filename), false), "UTF-8"));
 
             try {
                 proccessDialog(dialog, file, path);

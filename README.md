@@ -18,7 +18,7 @@ https://oauth.vk.com/blank.html#access_token=__TOKEN__&expires_in=86400 where is
 
 Then run application:
 ```
-java -Dfile.encoding=UTF-8 -jar vk.history.jar -t __TOKEN__
+java -jar vk.history.jar -t __TOKEN__
 ```
 
 Options:

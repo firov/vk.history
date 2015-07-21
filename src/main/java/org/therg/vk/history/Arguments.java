@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Arguments {
+    enum Format {HTML, TXT}
+
+
     @Option(name = "-wp", aliases = "--without-photos", usage = "Do not download photos")
     private boolean withoutPhotos = false;
 
@@ -19,29 +22,24 @@ public class Arguments {
     private boolean withoutDialogs = false;
 
     @Option(name = "-f", aliases = "--format", required = false, usage = "output format (txt, html)")
-    private String format = "html";
+    private Format format = Format.HTML;
 
-    @Option(name = "-t", aliases = "--token", required = true, usage = "vk API access token")
+    @Option(name = "-t", aliases = "--token", required = true, usage = "vk.com API access token")
     private String token;
 
     @Argument
-    private List<String> arguments = new ArrayList<String>();
+    private List<String> arguments = new ArrayList<>();
 
-    public void parse(String[] args) {
+    public void parse(String[] args) throws CmdLineException {
         CmdLineParser parser = new CmdLineParser(this);
-
-        try {
-            parser.parseArgument(args);
-        } catch (CmdLineException e) {
-            System.err.println(e.getMessage());
-        }
+        parser.parseArgument(args);
     }
 
     public String getToken() {
         return token;
     }
 
-    public String getFormat() {
+    public Format getFormat() {
         return format;
     }
 

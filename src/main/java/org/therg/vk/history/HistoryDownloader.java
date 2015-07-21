@@ -37,7 +37,7 @@ public class HistoryDownloader {
 
     public boolean execute() throws ApplicationException {
         IHistoryAppender appender;
-        if (arguments.getFormat().equals("html"))
+        if (arguments.getFormat() == Arguments.Format.HTML)
             appender = new HtmlAppender();
         else
             appender = new TextAppender();

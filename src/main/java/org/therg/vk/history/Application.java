@@ -4,6 +4,7 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kohsuke.args4j.CmdLineException;
 import org.therg.vk.history.model.ApplicationException;
 import org.therg.vk.history.model.OrikaMapping;
 
@@ -17,7 +18,12 @@ public class Application {
         logger.info("Starting");
 
         Arguments arguments = new Arguments();
-        arguments.parse(args);
+        try {
+            arguments.parse(args);
+        } catch (CmdLineException e) {
+            logger.error(e.getMessage());
+            System.exit(1);
+        }
 
         if (arguments.getToken() == null || arguments.getToken().equals("")) {
             System.out.println("Please obtain access token from:");
@@ -25,6 +31,17 @@ public class Application {
             System.out.println("Open this url in browser and, after confirming access for application, copy token from url");
             System.exit(1);
         }
+
+        logger.info(String.format("Using '%s' format", arguments.getFormat()));
+
+        if (arguments.isWithoutPhotos())
+            logger.info("Photos will be skipped");
+
+        if (arguments.isWithoutDialogs())
+            logger.info("Dialogs will be skipped");
+
+        if (arguments.isWithoutChats())
+            logger.info("Chats will be skipped");
 
         MapperFactory factory = new DefaultMapperFactory.Builder().useAutoMapping(false).build();
         OrikaMapping.map(factory);
