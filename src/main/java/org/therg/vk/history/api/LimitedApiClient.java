@@ -5,6 +5,7 @@ import org.therg.vk.history.api.messages.GetDialogsResult;
 import org.therg.vk.history.api.messages.GetHistoryResult;
 import org.therg.vk.history.api.users.UserInfoResult;
 
+import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -77,5 +78,10 @@ public class LimitedApiClient implements IApiClient {
     @Override
     public GetChatResult getChat(Collection<Long> ids) {
         return executeApiRequest(() -> client.getChat(ids));
+    }
+
+    @Override
+    public void downloadTarget(String url, OutputStream outputStream) {
+        this.client.downloadTarget(url, outputStream);
     }
 }

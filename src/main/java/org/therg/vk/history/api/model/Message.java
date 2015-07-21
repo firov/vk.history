@@ -1,6 +1,8 @@
-package org.therg.vk.history.api.messages;
+package org.therg.vk.history.api.model;
 
 import com.google.gson.annotations.SerializedName;
+
+import java.util.Collection;
 
 public class Message {
     @SerializedName("id")
@@ -33,8 +35,10 @@ public class Message {
     @SerializedName("emoji")
     public int emoji;
 
+    @SerializedName("attachments")
+    public Collection<Attachment> attachments;
 
-    // chats properties
+    // chat properties
 
     @SerializedName("action")
     public String action;

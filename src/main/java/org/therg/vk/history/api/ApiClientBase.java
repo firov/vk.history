@@ -11,7 +11,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.Map;
 
 public abstract class ApiClientBase {
@@ -38,6 +40,29 @@ public abstract class ApiClientBase {
         getRequest.addHeader("accept", "application/json");
 
         return httpClient.execute(getRequest);
+    }
+
+    public void downloadTarget(String url, OutputStream outputStream) {
+        logger.debug(url);
+
+        HttpGet getRequest = new HttpGet(url);
+
+        try {
+            HttpResponse response = httpClient.execute(getRequest);
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+
+            try (InputStream inputStream = response.getEntity().getContent()) {
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+
+                outputStream.flush();
+            }
+        } catch (IOException exception) {
+            logger.error("input/output error", exception);
+        }
     }
 
     private JsonObject getJson(HttpResponse response) throws IOException {

@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.therg.vk.history.api.IApiClient;
 import org.therg.vk.history.api.messages.GetDialogsResult;
 import org.therg.vk.history.api.messages.GetHistoryResult;
-import org.therg.vk.history.api.messages.Message;
+import org.therg.vk.history.api.model.Message;
 import org.therg.vk.history.api.users.UserInfoResult;
 import org.therg.vk.history.model.DialogInfo;
 import org.therg.vk.history.model.DialogMessage;

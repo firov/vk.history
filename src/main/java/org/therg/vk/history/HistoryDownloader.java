@@ -9,11 +9,12 @@ import org.therg.vk.history.api.messages.GetChatResult;
 import org.therg.vk.history.api.users.UserInfoResult;
 import org.therg.vk.history.appenders.HtmlAppender;
 import org.therg.vk.history.appenders.TextAppender;
-import org.therg.vk.history.model.ChatDialog;
-import org.therg.vk.history.model.DialogInfo;
-import org.therg.vk.history.model.User;
-import org.therg.vk.history.model.UserDialog;
+import org.therg.vk.history.model.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -80,32 +81,74 @@ public class HistoryDownloader {
         UserService usersService = new UserService();
         usersService.setupUsers(this.apiExtensions.getUsers(participants));
 
-        logger.info("Loading dialogs");
+        if (!arguments.isWithoutDialogs()) {
+            logger.info("Loading dialogs");
 
-        dialogs.stream().filter(x -> !x.isChat).map(x -> x.id).forEach(dialogId -> {
-            UserDialog dialog = new UserDialog(dialogId);
-            dialog.partner = usersService.getUser(dialogId);
-            dialog.owner = currentUser;
+            dialogs.stream().filter(x -> !x.isChat).map(x -> x.id).forEach(dialogId -> {
+                UserDialog dialog = new UserDialog(dialogId);
+                dialog.partner = usersService.getUser(dialogId);
+                dialog.owner = currentUser;
 
-            logger.info(String.format("Loading conversation with '%d'", dialog.partner.id));
+                logger.info(String.format("Loading conversation with '%d'", dialog.partner.id));
 
-            dialog.messages = this.apiExtensions.getDialogMessages(usersService, dialogId);
+                dialog.messages = this.apiExtensions.getDialogMessages(usersService, dialogId);
 
-            appender.proccessDialog(dialog);
-        });
+                appender.proccessDialog(dialog);
 
-        logger.info("Loading chats");
+                if (!arguments.isWithoutPhotos()) {
+                    logger.info("Loading photos");
+                    downloadPhotos(dialog);
+                }
+            });
+        }
 
-        dialogs.stream().filter(x -> x.isChat).map(x -> x.id).forEach(chatId -> {
-            ChatDialog dialog = new ChatDialog(chatId);
-            dialog.owner = currentUser;
-            dialog.title = chatsTitles.get(chatId);
+        if (!arguments.isWithoutChats()) {
+            logger.info("Loading chats");
 
-            logger.info(String.format("Loading chat '%d'", dialog.id));
+            dialogs.stream().filter(x -> x.isChat).map(x -> x.id).forEach(chatId -> {
+                ChatDialog dialog = new ChatDialog(chatId);
+                dialog.owner = currentUser;
+                dialog.title = chatsTitles.get(chatId);
 
-            dialog.messages = this.apiExtensions.getChatMessages(usersService, chatId);
+                logger.info(String.format("Loading chat '%d'", dialog.id));
 
-            appender.proccessDialog(dialog);
-        });
+                dialog.messages = this.apiExtensions.getChatMessages(usersService, chatId);
+
+                appender.proccessDialog(dialog);
+
+                if (!arguments.isWithoutPhotos()) {
+                    logger.info("Loading photos");
+                    downloadPhotos(dialog);
+                }
+            });
+        }
+    }
+
+    private void downloadPhotos(Dialog dialog) {
+        for (DialogMessage message : dialog.messages) {
+            if (message.photos == null)
+                continue;
+
+            for (PhotoInfo photo : message.photos) {
+                File outputFile = new File(photo.path);
+
+                if (outputFile.exists())
+                    continue;
+
+                FileOutputStream outputStream = null;
+                try {
+                    outputStream = new FileOutputStream(outputFile);
+                    apiClient.downloadTarget(photo.url, outputStream);
+                } catch (FileNotFoundException e) {
+                    logger.error("error creating photo file", e);
+                } finally {
+                    try {
+                        if (outputStream != null)
+                            outputStream.close();
+                    } catch (IOException ignored) {
+                    }
+                }
+            }
+        }
     }
 }

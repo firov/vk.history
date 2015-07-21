@@ -24,5 +24,7 @@ java -Dfile.encoding=UTF-8 -jar vk.history.jar -t __TOKEN__
 Options:
 ```
 -f txt|html -- exports in txt or html
--i -- includes images (not supported yet)
+-wp -- exclude photos
+-wc -- exclude chats
+-wd -- exclude dialogs
 ```
