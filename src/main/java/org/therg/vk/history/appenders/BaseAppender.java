@@ -32,7 +32,7 @@ public abstract class BaseAppender implements IHistoryAppender {
             throw new ApplicationException("failed to create output directory");
     }
 
-    protected abstract void proccessDialog(Dialog dialog, Writer outputFile, String outputPath) throws IOException;
+    protected abstract void proccessDialog(Dialog dialog, Writer outputFile, String filename, String outputPath) throws IOException;
 
     protected void proccessDialogInternal(Dialog dialog, String path, String filename) {
         Writer file;
@@ -55,7 +55,7 @@ public abstract class BaseAppender implements IHistoryAppender {
                     new OutputStreamWriter(new FileOutputStream(new File(path, filename), false), "UTF-8"));
 
             try {
-                proccessDialog(dialog, file, path);
+                proccessDialog(dialog, file, filename, path);
             } finally {
                 file.close();
             }

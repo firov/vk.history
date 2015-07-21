@@ -16,7 +16,7 @@ public class TextAppender extends BaseAppender implements IHistoryAppender {
         super("history/txt/", ".txt");
     }
 
-    protected void proccessDialog(Dialog dialog, Writer outputFile, String outputPath) throws IOException {
+    protected void proccessDialog(Dialog dialog, Writer outputFile, String filename, String outputPath) throws IOException {
         for (DialogMessage message : dialog.messages) {
             if (message.photos == null) {
                 outputFile.write(String.format("%s %s\n%s\n\n",

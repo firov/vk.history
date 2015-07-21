@@ -26,8 +26,8 @@ public class HtmlAppender extends BaseAppender implements IHistoryAppender {
         return s.hasNext() ? s.next() : "";
     }
 
-    protected void proccessDialog(Dialog dialog, Writer outputFile, String outputPath) throws IOException {
-        outputFile.write(htmlHeader);
+    protected void proccessDialog(Dialog dialog, Writer outputFile, String filename, String outputPath) throws IOException {
+        outputFile.write(htmlHeader.replace("__TITLE__", filename));
         outputFile.write("<body>\n");
         for (DialogMessage message : dialog.messages) {
             if (message.photos == null) {
